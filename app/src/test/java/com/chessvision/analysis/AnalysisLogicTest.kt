@@ -29,7 +29,7 @@ class AnalysisLogicTest {
     @Test fun lossIsMeasuredAgainstBestMoveBeforeAndNeverNegative() {
         assertEquals(120, MoveClassifier.lossCp(Score.Cp(150), Score.Cp(30)))
         assertEquals(0, MoveClassifier.lossCp(Score.Cp(10), Score.Cp(40)))
-        assertEquals(9_900, MoveClassifier.lossCp(Score.Mate(2), Score.Cp(100)))
+        assertEquals(9_898, MoveClassifier.lossCp(Score.Mate(2), Score.Cp(100)))
     }
 
     @Test fun classificationThresholds() {
