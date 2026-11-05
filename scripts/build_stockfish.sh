@@ -52,7 +52,12 @@ OUT="$SRC/src/stockfish"
 
 # ---- проверки результата ----
 READELF="$BIN/llvm-readelf"
-"$READELF" -h "$OUT" | grep -q 'Machine:.*AArch64' || die "бинарник не AArch64 (случайный desktop-файл?)"
+echo "=== ELF HEADER ==="
+"$READELF" -h "$OUT"
+echo "=== FILE TYPE ==="
+file "$OUT"
+
+"$READELF" -h "$OUT" | grep -qi 'AArch64' || die "бинарник действительно не AArch64"
 if "$READELF" -d "$OUT" | grep NEEDED | grep -q 'libc++_shared'; then
   die "бинарник зависит от libc++_shared.so; он не будет найден при запуске. Нужна статическая libc++."
 fi
@@ -76,7 +81,7 @@ if [ "${SMOKE_ADB:-0}" = "1" ]; then
   adb push "$OUT.stripped" /data/local/tmp/sf_smoke >/dev/null
   adb shell chmod 755 /data/local/tmp/sf_smoke
   RESP="$(printf 'uci\nisready\nquit\n' | adb shell /data/local/tmp/sf_smoke | tr -d '\r')"
-  echo "$RESP" | grep -qx uciok  || die "смоук-тест: нет uciok"
+   echo "$RESP" | grep -qx uciok  || die "смоук-тест: нет uciok"
   echo "$RESP" | grep -qx readyok || die "смоук-тест: нет readyok"
   echo "Смоук-тест на устройстве: OK (это запуск из /data/local/tmp, не из nativeLibraryDir приложения)"
 fi
